@@ -10,6 +10,8 @@ public interface InternalChannel extends Channel, Comparable<InternalChannel> {
 
     String toUnsubscribeMessage();
 
+    String eventMessage(String event, String message);
+
     void onMessage(String event, String message);
 
     void updateState(ChannelState state);

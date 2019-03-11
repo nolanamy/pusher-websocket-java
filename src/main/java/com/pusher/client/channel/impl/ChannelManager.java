@@ -93,13 +93,14 @@ public class ChannelManager implements ConnectionEventListener {
         }
     }
 
-    public void sendMessage(final String channelName, final String message) {
-        final InternalChannel channel = channelNameToChannelMap.remove(channelName);
+    void sendMessage(final String channelName, final String event, final String message) {
+        final InternalChannel channel = channelNameToChannelMap.get(channelName);
         if (channel == null) {
             return;
         }
+
         if (connection.getState() == ConnectionState.CONNECTED) {
-            sendMessage(message);
+            sendEventMessage(channel, event, message);
         }
     }
 
@@ -168,11 +169,11 @@ public class ChannelManager implements ConnectionEventListener {
         });
     }
 
-    public void sendMessage(final String message) {
+    private void sendEventMessage(final InternalChannel channel, final String event, final String message) {
         factory.queueOnEventThread(new Runnable() {
             @Override
             public void run() {
-                connection.sendMessage(message);
+                connection.sendMessage(channel.eventMessage(event, message));
             }
         });
     }

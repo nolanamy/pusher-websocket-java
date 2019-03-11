@@ -1,19 +1,16 @@
 package com.pusher.client.channel.impl;
 
-import java.util.Collections;
+import com.google.gson.Gson;
+import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.channel.ChannelState;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.util.Factory;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gson.Gson;
-
-import com.pusher.client.channel.ChannelEventListener;
-import com.pusher.client.channel.ChannelState;
-import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.connection.Connection;
-import com.pusher.client.util.Factory;
 
 public class ChannelImpl implements InternalChannel {
 
@@ -133,7 +130,7 @@ public class ChannelImpl implements InternalChannel {
         factory.queueOnEventThread(new Runnable() {
             @Override
             public void run() {
-                factory.getChannelManager().sendMessage(eventMessage(eventName, message));
+                factory.getChannelManager().sendMessage(name, eventName, message);
             }
         });
     }
@@ -180,12 +177,13 @@ public class ChannelImpl implements InternalChannel {
         }
     }
 
-//    @Override
+    @Override
     public String eventMessage(final String eventName, final String message) {
         final Map<Object, Object> jsonObject = new LinkedHashMap<Object, Object>();
-        jsonObject.put("event", eventName);
+        jsonObject.put("event", "client-" + eventName);
 
         final Map<Object, Object> dataMap = new LinkedHashMap<Object, Object>();
+        dataMap.put("channel", name);
         dataMap.put("message", message);
 
         jsonObject.put("data", dataMap);

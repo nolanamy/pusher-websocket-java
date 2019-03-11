@@ -80,7 +80,7 @@ public interface Channel {
      */
     void unbind(String eventName, SubscriptionEventListener listener);
 
-    void send(String eventName, String message);
+//    void send(String eventName, String message);
 
     /**
      *

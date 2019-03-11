@@ -81,10 +81,10 @@ public class ChannelImpl implements InternalChannel {
         }
     }
 
-    @Override
-    public void send(final String eventName, final String message) {
-        sendMessage(eventName, message);
-    }
+//    @Override
+//    public void send(final String eventName, final String message) {
+//        sendMessage(eventName, message);
+//    }
 
     @Override
     public boolean isSubscribed() {

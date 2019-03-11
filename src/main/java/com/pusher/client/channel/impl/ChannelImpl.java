@@ -184,7 +184,7 @@ public class ChannelImpl implements InternalChannel {
 
         final Map<Object, Object> dataMap = new LinkedHashMap<Object, Object>();
         dataMap.put("channel", name);
-        dataMap.put("message", message);
+        dataMap.put("data", message);
 
         jsonObject.put("data", dataMap);
 

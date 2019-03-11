@@ -80,6 +80,8 @@ public interface Channel {
      */
     void unbind(String eventName, SubscriptionEventListener listener);
 
+    void send(String eventName, String message);
+
     /**
      *
      * @return Whether or not the channel is subscribed.

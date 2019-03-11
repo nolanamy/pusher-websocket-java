@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.channel.ChannelState;
 import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.Connection;
 import com.pusher.client.util.Factory;
 
 public class ChannelImpl implements InternalChannel {
@@ -84,6 +85,11 @@ public class ChannelImpl implements InternalChannel {
     }
 
     @Override
+    public void send(final String eventName, final String message) {
+        sendMessage(eventName, message);
+    }
+
+    @Override
     public boolean isSubscribed() {
         return state == ChannelState.SUBSCRIBED;
     }
@@ -121,6 +127,15 @@ public class ChannelImpl implements InternalChannel {
                 }
             }
         }
+    }
+
+    private void sendMessage(final String eventName, final String message) {
+        factory.queueOnEventThread(new Runnable() {
+            @Override
+            public void run() {
+                factory.getChannelManager().sendMessage(eventMessage(eventName, message));
+            }
+        });
     }
 
     @Override
@@ -163,6 +178,19 @@ public class ChannelImpl implements InternalChannel {
                 }
             });
         }
+    }
+
+//    @Override
+    public String eventMessage(final String eventName, final String message) {
+        final Map<Object, Object> jsonObject = new LinkedHashMap<Object, Object>();
+        jsonObject.put("event", eventName);
+
+        final Map<Object, Object> dataMap = new LinkedHashMap<Object, Object>();
+        dataMap.put("message", message);
+
+        jsonObject.put("data", dataMap);
+
+        return GSON.toJson(jsonObject);
     }
 
     /* Comparable implementation */

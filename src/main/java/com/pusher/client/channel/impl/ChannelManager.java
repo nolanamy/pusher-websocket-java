@@ -93,6 +93,16 @@ public class ChannelManager implements ConnectionEventListener {
         }
     }
 
+    public void sendMessage(final String channelName, final String message) {
+        final InternalChannel channel = channelNameToChannelMap.remove(channelName);
+        if (channel == null) {
+            return;
+        }
+        if (connection.getState() == ConnectionState.CONNECTED) {
+            sendMessage(message);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public void onMessage(final String event, final String wholeMessage) {
 
@@ -154,6 +164,15 @@ public class ChannelManager implements ConnectionEventListener {
             public void run() {
                 connection.sendMessage(channel.toUnsubscribeMessage());
                 channel.updateState(ChannelState.UNSUBSCRIBED);
+            }
+        });
+    }
+
+    public void sendMessage(final String message) {
+        factory.queueOnEventThread(new Runnable() {
+            @Override
+            public void run() {
+                connection.sendMessage(message);
             }
         });
     }
